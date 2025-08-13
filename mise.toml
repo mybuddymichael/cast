@@ -16,6 +16,9 @@ run = "bun --bun run tsc"
 [tasks.test]
 run = "bun test"
 
+[tasks.build]
+run = "bun build --compile --minify --bytecode --outfile=color-convert index.ts"
+
 [tasks.check]
 run = [
   "mise run format",
