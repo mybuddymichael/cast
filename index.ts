@@ -38,9 +38,7 @@ export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 			error.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION'
 		) {
 			console.error("I can't output to that type.")
-			console.error(
-				'Supported formats: --to-hex, --to-rgb, --to-hsl, --to-hsb, --to-oklch, --to-p3, --to-lab, --to-lch, --to-xyz, --to-hwb',
-			)
+			console.error('Run `color-convert --help` for a list of supported formats.')
 			process.exit(1)
 		}
 		throw error
@@ -93,55 +91,30 @@ Examples:
 	}
 
 	const targetFlag = activeFormats[0]!
-	let format: string
-	let outputFormat: string
 
-	// Map CLI flags to Color.js space identifiers and output formats
-	switch (targetFlag) {
-		case 'to-hex':
+	// Strip 'to-' prefix to get the base format
+	let format = targetFlag.slice(3)
+	let outputFormat: string | undefined
+
+	// Handle special cases where format needs adjustment
+	switch (format) {
+		case 'hex':
 			format = 'srgb'
 			outputFormat = 'hex'
 			break
-		case 'to-rgb':
+		case 'rgb':
 			format = 'srgb'
-			outputFormat = 'srgb'
 			break
-		case 'to-hsl':
-			format = 'hsl'
-			outputFormat = 'hsl'
-			break
-		case 'to-hsb':
+		case 'hsb':
 			format = 'hsv'
-			outputFormat = 'hsv'
 			break
-		case 'to-oklch':
-			format = 'oklch'
-			outputFormat = 'oklch'
-			break
-		case 'to-p3':
-			format = 'p3'
-			outputFormat = 'p3'
-			break
-		case 'to-lab':
-			format = 'lab'
-			outputFormat = 'lab'
-			break
-		case 'to-lch':
-			format = 'lch'
-			outputFormat = 'lch'
-			break
-		case 'to-xyz':
+		case 'xyz':
 			format = 'xyz-d65'
-			outputFormat = 'xyz-d65'
 			break
-		case 'to-hwb':
-			format = 'hwb'
-			outputFormat = 'hwb'
-			break
-		default:
-			console.error('Error: Unsupported format')
-			process.exit(1)
 	}
+
+	// Default outputFormat to format for all other cases
+	outputFormat = outputFormat || format
 
 	return { color, format, outputFormat }
 }
