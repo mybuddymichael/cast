@@ -19,6 +19,14 @@ run = "bun test"
 [tasks.build]
 run = "bun build --compile --minify --bytecode --outfile=bin/color-convert index.ts"
 
+[tasks.build-npm]
+run = [
+  "mkdir -p bin",
+  "bun build index.ts --outfile=bin/color-convert.js --target=node --minify",
+  "echo '#!/usr/bin/env node' | cat - bin/color-convert.js > temp && mv temp bin/color-convert.js",
+  "chmod +x bin/color-convert.js"
+]
+
 [tasks.check]
 run = [
   "mise run format",
@@ -33,6 +41,6 @@ run = "bun run release.ts"
 [tasks.publish]
 run = [
   "mise run check",
-  "mise run build",
+  "mise run build-npm",
   "npm publish"
 ]

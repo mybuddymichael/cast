@@ -25,7 +25,7 @@
 		"oklab"
 	],
 	"bin": {
-		"color-convert": "./bin/color-convert"
+		"color-convert": "./bin/color-convert.js"
 	},
 	"files": [
 		"bin/",
