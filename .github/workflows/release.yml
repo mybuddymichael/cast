@@ -1,0 +1,98 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "cast ${{ github.ref_name }}"
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update Homebrew Formula
+        run: |
+          # Clone the tap repository
+          git clone https://x-access-token:${{ secrets.HOMEBREW_TAP_TOKEN }}@github.com/mybuddymichael/homebrew-tap.git tap
+          cd tap
+          
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Calculate SHA256 checksum for the source archive
+          TARBALL_URL="https://github.com/mybuddymichael/cast/archive/refs/tags/${{ github.ref_name }}.tar.gz"
+          # Wait for GitHub to process the release
+          sleep 10
+          SHA256=$(curl -sL "$TARBALL_URL" | shasum -a 256 | cut -d' ' -f1)
+          
+          # Verify we got a valid SHA256
+          if [[ ! "$SHA256" =~ ^[a-f0-9]{64}$ ]]; then
+            echo "Error: Invalid SHA256 checksum: $SHA256"
+            exit 1
+          fi
+          
+          echo "Calculated SHA256: $SHA256"
+          
+          # Create new formula content for source build
+          cat > cast.rb << EOF
+          # typed: false
+          # frozen_string_literal: true
+          
+          class Cast < Formula
+            desc "A tiny command line utility that converts colors from one format to another"
+            homepage "https://github.com/mybuddymichael/cast"
+            url "https://github.com/mybuddymichael/cast/archive/${{ github.ref_name }}.tar.gz"
+            sha256 "$SHA256"
+            version "${{ github.ref_name }}".delete_prefix("v")
+            license "MIT"
+            
+            head do
+              url "https://github.com/mybuddymichael/cast.git", branch: "main"
+            end
+            
+            depends_on "bun" => :build
+          
+            def install
+              system "bun", "install"
+              system "bun", "build", "index.ts", "--compile", "--minify", "--bytecode", "--outfile=bin/cast"
+              bin.install "bin/cast"
+            end          
+
+            test do
+              # Test that binary exists and is executable
+              assert_predicate bin/"cast", :exist?
+              assert_predicate bin/"cast", :executable?
+              
+              # Test basic color conversion functionality
+              output = shell_output("#{bin}/cast '#ff0000' --to-rgb")
+              assert_match(/rgb\(100% 0% 0%\)/, output)
+              
+              # Verify it's a valid binary
+              if OS.mac?
+                assert_match "Mach-O", shell_output("file #{bin}/cast")
+              end
+            end
+          end
+          EOF
+          
+          # Commit and push changes
+          git add cast.rb
+          git commit -m "Update cast to ${{ github.ref_name }}"
+          git push origin main

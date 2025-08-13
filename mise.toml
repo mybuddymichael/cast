@@ -16,8 +16,8 @@ run = "bun --bun run tsc"
 [tasks.test]
 run = "bun test"
 
-[tasks.build]
-run = "bun build --compile --minify --bytecode --outfile=bin/cast index.ts"
+[tasks.build-binary]
+run = "bun build index.ts --compile --minify --bytecode --outfile=bin/cast"
 
 [tasks.build-npm]
 run = [
@@ -36,7 +36,9 @@ run = [
 ]
 
 [tasks.release]
+depends = ["check"]
 run = "bun run release.ts"
 
 [tasks.publish]
-run = ["mise run check", "mise run build-npm", "npm publish"]
+depends = ["check"]
+run = ["mise run release", "mise run build-npm", "npm publish"]
