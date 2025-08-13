@@ -18,7 +18,7 @@ bunx color-convert <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb
 ```
 Or with `npx`:
 ```bash
-npx color-convert <color> <output format>
+npx color-convert <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
 ```
 
 ### Install via npm
@@ -33,7 +33,7 @@ npm install -g color-convert
 ```bash
 brew tap mybuddymichael/homebrew-tap
 brew install mybuddymichael/tap/color-convert
-color-convert <color> <output format>
+color-convert <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
 ```
 
 ### Using from LLMs
@@ -46,7 +46,7 @@ Run `color-convert --help` for usage and a list of supported formats.
 ```
 
 > [!NOTE]
-> If you are using this tool with your LLM, I recommend you install it first (and not use it wit `bunx` or `npx`) so that you have a known-safe and pristine copy on your device.
+> If you are using this tool with your LLM, I recommend you install it first (and not use it with `bunx` or `npx`) so that you have a known-safe and pristine copy on your device.
 
 ### Help and documentation
 
