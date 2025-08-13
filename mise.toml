@@ -40,5 +40,5 @@ depends = ["check"]
 run = "bun run release.ts"
 
 [tasks.publish]
-depends = ["check"]
-run = ["mise run release", "mise run build-npm", "npm publish"]
+depends = ["release"]
+run = ["mise run build-npm", "npm publish"]
