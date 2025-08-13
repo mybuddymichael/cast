@@ -189,3 +189,36 @@ test('parseCliArgs - should handle complex color strings', () => {
 	expect(result.format).toBe('oklch')
 	expect(result.outputFormat).toBe('oklch')
 })
+
+test('parseCliArgs - should error with unsupported format flag', () => {
+	const args = ['bun', 'index.ts', '#ff0000', '--to-xyz']
+
+	expect(() => parseCliArgs(args)).toThrow('process.exit(1)')
+	expect(mockConsoleError).toHaveBeenCalledWith("I can't output to that type.")
+	expect(mockConsoleError).toHaveBeenCalledWith(
+		'Supported formats: --to-hex, --to-rgb, --to-hsl, --to-hsb, --to-oklch',
+	)
+	expect(mockProcessExit).toHaveBeenCalledWith(1)
+})
+
+test('parseCliArgs - should error with unknown option flag', () => {
+	const args = ['bun', 'index.ts', '#ff0000', '--unknown-flag']
+
+	expect(() => parseCliArgs(args)).toThrow('process.exit(1)')
+	expect(mockConsoleError).toHaveBeenCalledWith("I can't output to that type.")
+	expect(mockConsoleError).toHaveBeenCalledWith(
+		'Supported formats: --to-hex, --to-rgb, --to-hsl, --to-hsb, --to-oklch',
+	)
+	expect(mockProcessExit).toHaveBeenCalledWith(1)
+})
+
+test('parseCliArgs - should handle multiple invalid flags gracefully', () => {
+	const args = ['bun', 'index.ts', '#ff0000', '--invalid1', '--invalid2']
+
+	expect(() => parseCliArgs(args)).toThrow('process.exit(1)')
+	expect(mockConsoleError).toHaveBeenCalledWith("I can't output to that type.")
+	expect(mockConsoleError).toHaveBeenCalledWith(
+		'Supported formats: --to-hex, --to-rgb, --to-hsl, --to-hsb, --to-oklch',
+	)
+	expect(mockProcessExit).toHaveBeenCalledWith(1)
+})

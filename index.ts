@@ -8,19 +8,36 @@ interface ParsedArgs {
 }
 
 export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
-	const { values, positionals } = parseArgs({
-		args,
-		options: {
-			'to-hex': { type: 'boolean' },
-			'to-rgb': { type: 'boolean' },
-			'to-hsl': { type: 'boolean' },
-			'to-hsb': { type: 'boolean' },
-			'to-oklch': { type: 'boolean' },
-			help: { type: 'boolean', short: 'h' },
-		},
-		strict: true,
-		allowPositionals: true,
-	})
+	let values: Record<string, unknown>, positionals: string[]
+
+	try {
+		const parsed = parseArgs({
+			args,
+			options: {
+				'to-hex': { type: 'boolean' },
+				'to-rgb': { type: 'boolean' },
+				'to-hsl': { type: 'boolean' },
+				'to-hsb': { type: 'boolean' },
+				'to-oklch': { type: 'boolean' },
+				help: { type: 'boolean', short: 'h' },
+			},
+			strict: true,
+			allowPositionals: true,
+		})
+		values = parsed.values
+		positionals = parsed.positionals
+	} catch (error) {
+		if (
+			error instanceof Error &&
+			'code' in error &&
+			error.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION'
+		) {
+			console.error("I can't output to that type.")
+			console.error('Supported formats: --to-hex, --to-rgb, --to-hsl, --to-hsb, --to-oklch')
+			process.exit(1)
+		}
+		throw error
+	}
 
 	if (values.help) {
 		console.log(`
