@@ -17,10 +17,19 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Generate changelog
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: --latest --strip header
+        env:
+          OUTPUT: CHANGELOG_RELEASE.md
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           name: "cast ${{ github.ref_name }}"
+          body_path: CHANGELOG_RELEASE.md
           draft: false
           prerelease: false
         env:
