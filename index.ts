@@ -1,20 +1,20 @@
 import { parseArgs } from 'util'
+import Color from 'colorjs.io'
 
 interface ParsedArgs {
 	color: string
-	format?: string
+	format: string
+	outputFormat: string
 }
 
-function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
+export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 	const { values, positionals } = parseArgs({
 		args,
 		options: {
+			'to-hex': { type: 'boolean' },
 			'to-rgb': { type: 'boolean' },
 			'to-hsl': { type: 'boolean' },
-			'to-hsv': { type: 'boolean' },
 			'to-hsb': { type: 'boolean' },
-			'to-hwb': { type: 'boolean' },
-			'to-oklab': { type: 'boolean' },
 			'to-oklch': { type: 'boolean' },
 			help: { type: 'boolean', short: 'h' },
 		},
@@ -24,11 +24,12 @@ function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 
 	if (values.help) {
 		console.log(`
-Usage: color-convert <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
+Usage: color-convert <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch]
 
 Examples:
   color-convert "#ff0000" --to-hsl
   color-convert "oklch(1.000 0.000 0)" --to-rgb
+  color-convert "rgba(255, 255, 255, 1)" --to-hex
     `)
 		process.exit(0)
 	}
@@ -41,15 +42,7 @@ Examples:
 	}
 
 	// Determine the target format
-	const formatFlags = [
-		'to-rgb',
-		'to-hsl',
-		'to-hsv',
-		'to-hsb',
-		'to-hwb',
-		'to-oklab',
-		'to-oklch',
-	] as const
+	const formatFlags = ['to-hex', 'to-rgb', 'to-hsl', 'to-hsb', 'to-oklch'] as const
 	const activeFormats = formatFlags.filter((flag) => values[flag as keyof typeof values])
 
 	if (activeFormats.length === 0) {
@@ -62,18 +55,49 @@ Examples:
 		process.exit(1)
 	}
 
-	const format = activeFormats[0]!.replace('to-', '')
+	const targetFlag = activeFormats[0]!
+	let format: string
+	let outputFormat: string
 
-	return { color, format }
+	// Map CLI flags to Color.js space identifiers and output formats
+	switch (targetFlag) {
+		case 'to-hex':
+			format = 'srgb'
+			outputFormat = 'hex'
+			break
+		case 'to-rgb':
+			format = 'srgb'
+			outputFormat = 'srgb'
+			break
+		case 'to-hsl':
+			format = 'hsl'
+			outputFormat = 'hsl'
+			break
+		case 'to-hsb':
+			format = 'hsv'
+			outputFormat = 'hsv'
+			break
+		case 'to-oklch':
+			format = 'oklch'
+			outputFormat = 'oklch'
+			break
+		default:
+			console.error('Error: Unsupported format')
+			process.exit(1)
+	}
+
+	return { color, format, outputFormat }
 }
 
 function main(): void {
-	const { color, format } = parseCliArgs()
+	const { color, format, outputFormat } = parseCliArgs()
 
-	console.log(`Converting color: ${color}`)
-	console.log(`Target format: ${format}`)
-
-	// TODO: Implement actual color conversion using color.js
+	const parsedColor = new Color(color)
+	const outputColor = parsedColor.to(format)
+	console.log(outputColor.toString({ format: outputFormat }))
 }
 
-main()
+// Required for testing
+if (import.meta.main) {
+	main()
+}

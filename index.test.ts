@@ -25,14 +25,6 @@ afterEach(() => {
 	;(global as any).process = originalProcess
 })
 
-// Test helper function for main functionality
-const testMainOutput = (): void => {
-	const color = '#ff0000'
-	const format = 'hsl'
-	console.log(`Converting color: ${color}`)
-	console.log(`Target format: ${format}`)
-}
-
 test('parseCliArgs - should parse color and format correctly', () => {
 	const args = ['bun', 'index.ts', '#ff0000', '--to-hsl']
 
@@ -40,6 +32,7 @@ test('parseCliArgs - should parse color and format correctly', () => {
 
 	expect(result.color).toBe('#ff0000')
 	expect(result.format).toBe('hsl')
+	expect(result.outputFormat).toBe('hsl')
 })
 
 test('parseCliArgs - should handle different color formats', () => {
@@ -48,18 +41,26 @@ test('parseCliArgs - should handle different color formats', () => {
 	const result = parseCliArgs(args)
 
 	expect(result.color).toBe('oklch(1.000 0.000 0)')
-	expect(result.format).toBe('rgb')
+	expect(result.format).toBe('srgb')
+	expect(result.outputFormat).toBe('srgb')
 })
 
 test('parseCliArgs - should handle all supported output formats', () => {
-	const formats = ['rgb', 'hsl', 'hsv', 'hsb', 'hwb', 'oklab', 'oklch']
+	const testCases = [
+		{ flag: 'hex', expectedFormat: 'srgb', expectedOutput: 'hex' },
+		{ flag: 'rgb', expectedFormat: 'srgb', expectedOutput: 'srgb' },
+		{ flag: 'hsl', expectedFormat: 'hsl', expectedOutput: 'hsl' },
+		{ flag: 'hsb', expectedFormat: 'hsv', expectedOutput: 'hsv' },
+		{ flag: 'oklch', expectedFormat: 'oklch', expectedOutput: 'oklch' },
+	]
 
-	formats.forEach((format) => {
-		const args = ['bun', 'index.ts', '#ff0000', `--to-${format}`]
+	testCases.forEach(({ flag, expectedFormat, expectedOutput }) => {
+		const args = ['bun', 'index.ts', '#ff0000', `--to-${flag}`]
 
 		const result = parseCliArgs(args)
 
-		expect(result.format).toBe(format)
+		expect(result.format).toBe(expectedFormat)
+		expect(result.outputFormat).toBe(expectedOutput)
 	})
 })
 
@@ -67,7 +68,11 @@ test('parseCliArgs - should show help and exit with help flag', () => {
 	const args = ['bun', 'index.ts', '--help']
 
 	expect(() => parseCliArgs(args)).toThrow('process.exit(0)')
-	expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining('Usage: color-convert'))
+	expect(mockConsoleLog).toHaveBeenCalledWith(
+		expect.stringContaining(
+			'Usage: color-convert <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch]',
+		),
+	)
 	expect(mockProcessExit).toHaveBeenCalledWith(0)
 })
 
@@ -75,7 +80,11 @@ test('parseCliArgs - should show help and exit with short help flag', () => {
 	const args = ['bun', 'index.ts', '-h']
 
 	expect(() => parseCliArgs(args)).toThrow('process.exit(0)')
-	expect(mockConsoleLog).toHaveBeenCalledWith(expect.stringContaining('Usage: color-convert'))
+	expect(mockConsoleLog).toHaveBeenCalledWith(
+		expect.stringContaining(
+			'Usage: color-convert <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch]',
+		),
+	)
 	expect(mockProcessExit).toHaveBeenCalledWith(0)
 })
 
@@ -111,7 +120,8 @@ test('parseCliArgs - should handle colors with spaces when quoted', () => {
 	const result = parseCliArgs(args)
 
 	expect(result.color).toBe('hsl(120, 100%, 50%)')
-	expect(result.format).toBe('rgb')
+	expect(result.format).toBe('srgb')
+	expect(result.outputFormat).toBe('srgb')
 })
 
 test('parseCliArgs - should handle edge case with empty string color', () => {
@@ -122,16 +132,41 @@ test('parseCliArgs - should handle edge case with empty string color', () => {
 	expect(mockProcessExit).toHaveBeenCalledWith(1)
 })
 
-test('main function - should output correct format', () => {
-	// Test that the output functions work correctly
-	const mockConsoleLogMain = spyOn(console, 'log').mockImplementation(() => {})
+test('color conversion integration - should handle real color conversions', () => {
+	// Test with a real Color.js conversion to ensure the integration works
+	const Color = require('colorjs.io').default
 
-	testMainOutput()
+	// Test hex to HSL conversion
+	const redColor = new Color('#ff0000')
+	const hslColor = redColor.to('hsl')
+	const hslString = hslColor.toString({ format: 'hsl' })
 
-	expect(mockConsoleLogMain).toHaveBeenCalledWith('Converting color: #ff0000')
-	expect(mockConsoleLogMain).toHaveBeenCalledWith('Target format: hsl')
+	expect(hslString).toContain('hsl(')
+	expect(hslString).toContain('0') // hue for red
+	expect(hslString).toContain('100%') // saturation
+	expect(hslString).toContain('50%') // lightness
+})
 
-	mockConsoleLogMain.mockRestore()
+test('hex format conversion - should convert to hex correctly', () => {
+	const Color = require('colorjs.io').default
+
+	// Test RGB to hex conversion
+	const rgbColor = new Color('rgb(255, 0, 0)')
+	const srgbColor = rgbColor.to('srgb')
+	const hexString = srgbColor.toString({ format: 'hex' })
+
+	// Color.js may return shortened hex format like #f00 instead of #ff0000
+	expect(hexString).toMatch(/^#f{1,2}0{1,2}0{0,2}$/)
+})
+
+test('parseCliArgs - should handle hex format flag', () => {
+	const args = ['bun', 'index.ts', 'rgb(255, 0, 0)', '--to-hex']
+
+	const result = parseCliArgs(args)
+
+	expect(result.color).toBe('rgb(255, 0, 0)')
+	expect(result.format).toBe('srgb')
+	expect(result.outputFormat).toBe('hex')
 })
 
 test('parseCliArgs - should handle case sensitivity correctly', () => {
@@ -140,7 +175,8 @@ test('parseCliArgs - should handle case sensitivity correctly', () => {
 	const result = parseCliArgs(args)
 
 	expect(result.color).toBe('#FF0000')
-	expect(result.format).toBe('rgb')
+	expect(result.format).toBe('srgb')
+	expect(result.outputFormat).toBe('srgb')
 })
 
 test('parseCliArgs - should handle complex color strings', () => {
@@ -151,4 +187,5 @@ test('parseCliArgs - should handle complex color strings', () => {
 
 	expect(result.color).toBe(complexColor)
 	expect(result.format).toBe('oklch')
+	expect(result.outputFormat).toBe('oklch')
 })
