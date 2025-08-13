@@ -17,7 +17,7 @@ run = "bun --bun run tsc"
 run = "bun test"
 
 [tasks.build]
-run = "bun build --compile --minify --bytecode --outfile=color-convert index.ts"
+run = "bun build --compile --minify --bytecode --outfile=bin/color-convert index.ts"
 
 [tasks.check]
 run = [
@@ -29,3 +29,10 @@ run = [
 
 [tasks.release]
 run = "bun run release.ts"
+
+[tasks.publish]
+run = [
+  "mise run check",
+  "mise run build",
+  "npm publish"
+]

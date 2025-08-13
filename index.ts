@@ -60,9 +60,9 @@ export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 
 	// Get the color from positionals (skip bun and script path)
 	const color = positionals[2]
-	if (!color) {
-		console.log(HELP_TEXT)
-		process.exit(0)
+	if (!color || color.trim() === '') {
+		console.error('Error: No color provided')
+		process.exit(1)
 	}
 
 	// Determine the target format
