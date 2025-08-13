@@ -70,7 +70,7 @@ test('parseCliArgs - should show help and exit with help flag', () => {
 	expect(() => parseCliArgs(args)).toThrow('process.exit(0)')
 	expect(mockConsoleLog).toHaveBeenCalledWith(
 		expect.stringContaining(
-			'Usage: color-convert <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch | --to-p3 | --to-lab | --to-lch | --to-xyz | --to-hwb]',
+			'Usage: cast <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch | --to-p3 | --to-lab | --to-lch | --to-xyz | --to-hwb]',
 		),
 	)
 	expect(mockProcessExit).toHaveBeenCalledWith(0)
@@ -82,7 +82,7 @@ test('parseCliArgs - should show help and exit with short help flag', () => {
 	expect(() => parseCliArgs(args)).toThrow('process.exit(0)')
 	expect(mockConsoleLog).toHaveBeenCalledWith(
 		expect.stringContaining(
-			'Usage: color-convert <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch | --to-p3 | --to-lab | --to-lch | --to-xyz | --to-hwb]',
+			'Usage: cast <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch | --to-p3 | --to-lab | --to-lch | --to-xyz | --to-hwb]',
 		),
 	)
 	expect(mockProcessExit).toHaveBeenCalledWith(0)
@@ -196,7 +196,7 @@ test('parseCliArgs - should error with unsupported format flag', () => {
 	expect(() => parseCliArgs(args)).toThrow('process.exit(1)')
 	expect(mockConsoleError).toHaveBeenCalledWith("I can't output to that type.")
 	expect(mockConsoleError).toHaveBeenCalledWith(
-		'Run `color-convert --help` for a list of supported formats.',
+		'Run `cast --help` for a list of supported formats.',
 	)
 	expect(mockProcessExit).toHaveBeenCalledWith(1)
 })
@@ -207,7 +207,7 @@ test('parseCliArgs - should error with unknown option flag', () => {
 	expect(() => parseCliArgs(args)).toThrow('process.exit(1)')
 	expect(mockConsoleError).toHaveBeenCalledWith("I can't output to that type.")
 	expect(mockConsoleError).toHaveBeenCalledWith(
-		'Run `color-convert --help` for a list of supported formats.',
+		'Run `cast --help` for a list of supported formats.',
 	)
 	expect(mockProcessExit).toHaveBeenCalledWith(1)
 })
@@ -218,7 +218,7 @@ test('parseCliArgs - should handle multiple invalid flags gracefully', () => {
 	expect(() => parseCliArgs(args)).toThrow('process.exit(1)')
 	expect(mockConsoleError).toHaveBeenCalledWith("I can't output to that type.")
 	expect(mockConsoleError).toHaveBeenCalledWith(
-		'Run `color-convert --help` for a list of supported formats.',
+		'Run `cast --help` for a list of supported formats.',
 	)
 	expect(mockProcessExit).toHaveBeenCalledWith(1)
 })

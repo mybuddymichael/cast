@@ -1,16 +1,16 @@
 {
-	"name": "color-convert",
+	"name": "cast",
 	"version": "0.1.0",
 	"description": "A tiny command line utility that converts colors from one format to another",
 	"author": "Michael Hanson",
 	"license": "MIT",
-	"homepage": "https://github.com/mybuddymichael/color-convert",
+	"homepage": "https://github.com/mybuddymichael/cast",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/mybuddymichael/color-convert.git"
+		"url": "https://github.com/mybuddymichael/cast.git"
 	},
 	"bugs": {
-		"url": "https://github.com/mybuddymichael/color-convert/issues"
+		"url": "https://github.com/mybuddymichael/cast/issues"
 	},
 	"keywords": [
 		"color",
@@ -25,7 +25,7 @@
 		"oklab"
 	],
 	"bin": {
-		"color-convert": "./bin/color-convert.js"
+		"cast": "./bin/cast.js"
 	},
 	"files": [
 		"bin/",

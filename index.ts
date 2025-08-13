@@ -7,14 +7,14 @@ interface ParsedArgs {
 	outputFormat: string
 }
 
-const HELP_TEXT = `Usage: color-convert <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch | --to-p3 | --to-lab | --to-lch | --to-xyz | --to-hwb]
+const HELP_TEXT = `Usage: cast <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch | --to-p3 | --to-lab | --to-lch | --to-xyz | --to-hwb]
 
 Examples:
-  color-convert "#ff0000" --to-hsl
-  color-convert "oklch(1.000 0.000 0)" --to-rgb
-  color-convert "rgba(255, 255, 255, 1)" --to-hex
-  color-convert "hsl(120, 100%, 50%)" --to-p3
-  color-convert "lab(50% 20 -30)" --to-lch`
+  cast "#ff0000" --to-hsl
+  cast "oklch(1.000 0.000 0)" --to-rgb
+  cast "rgba(255, 255, 255, 1)" --to-hex
+  cast "hsl(120, 100%, 50%)" --to-p3
+  cast "lab(50% 20 -30)" --to-lch`
 
 export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 	let values: Record<string, unknown>, positionals: string[]
@@ -47,7 +47,7 @@ export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 			error.code === 'ERR_PARSE_ARGS_UNKNOWN_OPTION'
 		) {
 			console.error("I can't output to that type.")
-			console.error('Run `color-convert --help` for a list of supported formats.')
+			console.error('Run `cast --help` for a list of supported formats.')
 			process.exit(1)
 		}
 		throw error

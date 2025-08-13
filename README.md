@@ -1,39 +1,39 @@
-# color-convert
+# cast
 
 A tiny command line utility that converts colors from one format to another.
 
 ## Usage examples
 
 ```bash
-color-convert "#ff0000" --to-hsl                  # -> hsl(0, 100%, 50%)
-color-convert "oklch(1.000 0.000 0)" --to-rgb     # -> rgb(255, 255, 255)
-color-convert "rgba(0, 0, 255, 0.7)" --to-oklch   # -> oklch(45.201% 0.31321 264.05 / 0.7)
+cast "#ff0000" --to-hsl                  # -> hsl(0, 100%, 50%)
+cast "oklch(1.000 0.000 0)" --to-rgb     # -> rgb(255, 255, 255)
+cast "rgba(0, 0, 255, 0.7)" --to-oklch   # -> oklch(45.201% 0.31321 264.05 / 0.7)
 ```
 
 ## Installation and usage
 
 ### Use without installing
 ```bash
-bunx color-convert <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
+bunx cast <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
 ```
 Or with `npx`:
 ```bash
-npx color-convert <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
+npx cast <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
 ```
 
 ### Install via npm
 ```bash
-bun add -g color-convert
+bun add -g cast
 ```
 ```bash
-npm install -g color-convert
+npm install -g cast
 ```
 
 ### Homebrew
 ```bash
 brew tap mybuddymichael/homebrew-tap
-brew install mybuddymichael/tap/color-convert
-color-convert <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
+brew install mybuddymichael/tap/cast
+cast <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
 ```
 
 ### Using from LLMs
@@ -41,8 +41,8 @@ color-convert <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --
 Put something like this in your prompt file to help LLMs convert colors:
 
 ```markdown
-Use the `color-convert` command to convert colors from one format to another.
-Run `color-convert --help` for usage and a list of supported formats.
+Use the `cast` command to convert colors from one format to another.
+Run `cast --help` for usage and a list of supported formats.
 ```
 
 > [!NOTE]
@@ -50,7 +50,7 @@ Run `color-convert --help` for usage and a list of supported formats.
 
 ### Help and documentation
 
-Run `color-convert --help` for a list of supported formats.
+Run `cast --help` for a list of supported formats.
 
 ## Development
 
