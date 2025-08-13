@@ -5,7 +5,7 @@ interface ParsedArgs {
 	format?: string
 }
 
-export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
+function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 	const { values, positionals } = parseArgs({
 		args,
 		options: {
@@ -67,7 +67,7 @@ Examples:
 	return { color, format }
 }
 
-export function main(): void {
+function main(): void {
 	const { color, format } = parseCliArgs()
 
 	console.log(`Converting color: ${color}`)
@@ -76,6 +76,4 @@ export function main(): void {
 	// TODO: Implement actual color conversion using color.js
 }
 
-if (import.meta.main) {
-	main()
-}
+main()
