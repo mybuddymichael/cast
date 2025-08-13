@@ -7,6 +7,15 @@ interface ParsedArgs {
 	outputFormat: string
 }
 
+const HELP_TEXT = `Usage: color-convert <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch | --to-p3 | --to-lab | --to-lch | --to-xyz | --to-hwb]
+
+Examples:
+  color-convert "#ff0000" --to-hsl
+  color-convert "oklch(1.000 0.000 0)" --to-rgb
+  color-convert "rgba(255, 255, 255, 1)" --to-hex
+  color-convert "hsl(120, 100%, 50%)" --to-p3
+  color-convert "lab(50% 20 -30)" --to-lch`
+
 export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 	let values: Record<string, unknown>, positionals: string[]
 
@@ -45,24 +54,15 @@ export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 	}
 
 	if (values.help) {
-		console.log(`
-Usage: color-convert <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch | --to-p3 | --to-lab | --to-lch | --to-xyz | --to-hwb]
-
-Examples:
-  color-convert "#ff0000" --to-hsl
-  color-convert "oklch(1.000 0.000 0)" --to-rgb
-  color-convert "rgba(255, 255, 255, 1)" --to-hex
-  color-convert "hsl(120, 100%, 50%)" --to-p3
-  color-convert "lab(50% 20 -30)" --to-lch
-    `)
+		console.log(HELP_TEXT)
 		process.exit(0)
 	}
 
 	// Get the color from positionals (skip bun and script path)
 	const color = positionals[2]
 	if (!color) {
-		console.error('Error: No color provided')
-		process.exit(1)
+		console.log(HELP_TEXT)
+		process.exit(0)
 	}
 
 	// Determine the target format
