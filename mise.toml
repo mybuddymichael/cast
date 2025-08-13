@@ -1,0 +1,28 @@
+[tools]
+bun = "1.2.18"
+
+[tasks.dev]
+run = "bun --bun run dev"
+
+[tasks.format]
+run = "bun --bun run biome format --write ."
+
+[tasks.lint]
+run = "bun --bun run oxlint"
+
+[tasks.typecheck]
+run = "bun --bun run tsc"
+
+[tasks.test]
+run = "bun test"
+
+[tasks.check]
+run = [
+  "mise run format",
+  "mise run lint",
+  "mise run typecheck",
+  "mise run test",
+]
+
+[tasks.release]
+run = "bun run release.ts"
