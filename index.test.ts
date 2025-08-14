@@ -1,5 +1,6 @@
 import { test, expect, mock, spyOn, beforeEach, afterEach } from 'bun:test'
-import { parseCliArgs } from './index.ts'
+import { parseCliArgs, preprocessColorInput } from './index.ts'
+import packageJson from './package.json'
 
 let mockProcessExit: any
 let mockConsoleLog: any
@@ -247,7 +248,7 @@ test('parseCliArgs - should show version and exit with version flag', () => {
 	const args = ['bun', 'index.ts', '--version']
 
 	expect(() => parseCliArgs(args)).toThrow('process.exit(0)')
-	expect(mockConsoleLog).toHaveBeenCalledWith('cast v0.1.0')
+	expect(mockConsoleLog).toHaveBeenCalledWith(`cast v${packageJson.version}`)
 	expect(mockProcessExit).toHaveBeenCalledWith(0)
 })
 
@@ -255,6 +256,58 @@ test('parseCliArgs - should show version and exit with short version flag', () =
 	const args = ['bun', 'index.ts', '-v']
 
 	expect(() => parseCliArgs(args)).toThrow('process.exit(0)')
-	expect(mockConsoleLog).toHaveBeenCalledWith('cast v0.1.0')
+	expect(mockConsoleLog).toHaveBeenCalledWith(`cast v${packageJson.version}`)
 	expect(mockProcessExit).toHaveBeenCalledWith(0)
+})
+
+test('preprocessColorInput - should convert hsb() to color(--hsv ...)', () => {
+	const input = 'hsb(208 50% 100%)'
+	const result = preprocessColorInput(input)
+	expect(result).toBe('color(--hsv 208 50% 100%)')
+})
+
+test('preprocessColorInput - should convert hsba() to color(--hsv ...)', () => {
+	const input = 'hsba(208 50% 100% / 0.5)'
+	const result = preprocessColorInput(input)
+	expect(result).toBe('color(--hsv 208 50% 100% / 0.5)')
+})
+
+test('preprocessColorInput - should handle comma-separated hsb values', () => {
+	const input = 'hsb(208, 50%, 100%)'
+	const result = preprocessColorInput(input)
+	expect(result).toBe('color(--hsv 208 50% 100%)')
+})
+
+test('preprocessColorInput - should handle mixed comma and space separation', () => {
+	const input = 'hsb(208,  50%,   100%)'
+	const result = preprocessColorInput(input)
+	expect(result).toBe('color(--hsv 208 50% 100%)')
+})
+
+test('preprocessColorInput - should be case insensitive', () => {
+	const input = 'HSB(208 50% 100%)'
+	const result = preprocessColorInput(input)
+	expect(result).toBe('color(--hsv 208 50% 100%)')
+})
+
+test('preprocessColorInput - should handle hsba with commas', () => {
+	const input = 'hsba(208, 50%, 100%, 0.8)'
+	const result = preprocessColorInput(input)
+	expect(result).toBe('color(--hsv 208 50% 100% 0.8)')
+})
+
+test('preprocessColorInput - should leave non-hsb colors unchanged', () => {
+	const testCases = [
+		'#ff0000',
+		'rgb(255, 0, 0)',
+		'hsl(0, 100%, 50%)',
+		'oklch(1.000 0.000 0)',
+		'color(--hsv 208 50% 100%)',
+		'lab(50% 20 -30)',
+	]
+
+	testCases.forEach((input) => {
+		const result = preprocessColorInput(input)
+		expect(result).toBe(input)
+	})
 })

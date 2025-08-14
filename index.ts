@@ -15,6 +15,8 @@ Examples:
   cast "oklch(1.000 0.000 0)" --to-rgb
   cast "rgba(255, 255, 255, 1)" --to-hex
   cast "hsl(120, 100%, 50%)" --to-p3
+  cast "hsb(208 50% 100%)" --to-hsl
+  cast "color(--hsv 208 50% 100%)" --to-hsl
   cast "lab(50% 20 -30)" --to-lch`
 
 export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
@@ -126,10 +128,25 @@ export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 	return { color, format, outputFormat }
 }
 
+export function preprocessColorInput(colorInput: string): string {
+	const trimmed = colorInput.trim()
+
+	// Convert hsb(...) or hsba(...) to color(--hsv ...)
+	const hsbMatch = trimmed.match(/^hsba?\(\s*(.+)\s*\)$/i)
+	if (hsbMatch) {
+		// Remove commas and normalize the inner content
+		const innerContent = hsbMatch[1]!.replace(/,/g, ' ').replace(/\s+/g, ' ').trim()
+		return `color(--hsv ${innerContent})`
+	}
+
+	return colorInput
+}
+
 function main(): void {
 	const { color, format, outputFormat } = parseCliArgs()
 
-	const parsedColor = new Color(color)
+	const preprocessedColor = preprocessColorInput(color)
+	const parsedColor = new Color(preprocessedColor)
 	const outputColor = parsedColor.to(format)
 	console.log(outputColor.toString({ format: outputFormat }))
 }
