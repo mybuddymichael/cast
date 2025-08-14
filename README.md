@@ -31,7 +31,6 @@ npm install -g cast
 
 ### Homebrew
 ```bash
-brew tap mybuddymichael/homebrew-tap
 brew install mybuddymichael/tap/cast
 cast <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
 ```
