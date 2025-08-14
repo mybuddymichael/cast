@@ -1,6 +1,6 @@
 {
 	"name": "cast",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"description": "A tiny command line utility that converts colors from one format to another",
 	"author": "Michael Hanson",
 	"license": "MIT",
