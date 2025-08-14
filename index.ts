@@ -1,5 +1,6 @@
 import { parseArgs } from 'util'
 import Color from 'colorjs.io'
+import packageJson from './package.json' with { type: 'json' }
 
 interface ParsedArgs {
 	color: string
@@ -34,6 +35,7 @@ export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 				'to-xyz': { type: 'boolean' },
 				'to-hwb': { type: 'boolean' },
 				help: { type: 'boolean', short: 'h' },
+				version: { type: 'boolean', short: 'v' },
 			},
 			strict: true,
 			allowPositionals: true,
@@ -58,11 +60,16 @@ export function parseCliArgs(args: string[] = Bun.argv): ParsedArgs {
 		process.exit(0)
 	}
 
+	if (values.version) {
+		console.log(`cast v${packageJson.version}`)
+		process.exit(0)
+	}
+
 	// Get the color from positionals (skip bun and script path)
 	const color = positionals[2]
 	if (!color || color.trim() === '') {
-		console.error('Error: No color provided')
-		process.exit(1)
+		console.log(HELP_TEXT)
+		process.exit(0)
 	}
 
 	// Determine the target format

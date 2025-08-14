@@ -88,12 +88,16 @@ test('parseCliArgs - should show help and exit with short help flag', () => {
 	expect(mockProcessExit).toHaveBeenCalledWith(0)
 })
 
-test('parseCliArgs - should error when no color provided', () => {
+test('parseCliArgs - should show help when no color provided', () => {
 	const args = ['bun', 'index.ts', '--to-rgb']
 
-	expect(() => parseCliArgs(args)).toThrow('process.exit(1)')
-	expect(mockConsoleError).toHaveBeenCalledWith('Error: No color provided')
-	expect(mockProcessExit).toHaveBeenCalledWith(1)
+	expect(() => parseCliArgs(args)).toThrow('process.exit(0)')
+	expect(mockConsoleLog).toHaveBeenCalledWith(
+		expect.stringContaining(
+			'Usage: cast <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch | --to-p3 | --to-lab | --to-lch | --to-xyz | --to-hwb]',
+		),
+	)
+	expect(mockProcessExit).toHaveBeenCalledWith(0)
 })
 
 test('parseCliArgs - should error when no target format specified', () => {
@@ -124,12 +128,16 @@ test('parseCliArgs - should handle colors with spaces when quoted', () => {
 	expect(result.outputFormat).toBe('srgb')
 })
 
-test('parseCliArgs - should handle edge case with empty string color', () => {
+test('parseCliArgs - should show help with empty string color', () => {
 	const args = ['bun', 'index.ts', '', '--to-rgb']
 
-	expect(() => parseCliArgs(args)).toThrow('process.exit(1)')
-	expect(mockConsoleError).toHaveBeenCalledWith('Error: No color provided')
-	expect(mockProcessExit).toHaveBeenCalledWith(1)
+	expect(() => parseCliArgs(args)).toThrow('process.exit(0)')
+	expect(mockConsoleLog).toHaveBeenCalledWith(
+		expect.stringContaining(
+			'Usage: cast <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch | --to-p3 | --to-lab | --to-lch | --to-xyz | --to-hwb]',
+		),
+	)
+	expect(mockProcessExit).toHaveBeenCalledWith(0)
 })
 
 test('color conversion integration - should handle real color conversions', () => {
@@ -221,4 +229,32 @@ test('parseCliArgs - should handle multiple invalid flags gracefully', () => {
 		'Run `cast --help` for a list of supported formats.',
 	)
 	expect(mockProcessExit).toHaveBeenCalledWith(1)
+})
+
+test('parseCliArgs - should show help when no arguments provided', () => {
+	const args = ['bun', 'index.ts']
+
+	expect(() => parseCliArgs(args)).toThrow('process.exit(0)')
+	expect(mockConsoleLog).toHaveBeenCalledWith(
+		expect.stringContaining(
+			'Usage: cast <color> [--to-hex | --to-rgb | --to-hsl | --to-hsb | --to-oklch | --to-p3 | --to-lab | --to-lch | --to-xyz | --to-hwb]',
+		),
+	)
+	expect(mockProcessExit).toHaveBeenCalledWith(0)
+})
+
+test('parseCliArgs - should show version and exit with version flag', () => {
+	const args = ['bun', 'index.ts', '--version']
+
+	expect(() => parseCliArgs(args)).toThrow('process.exit(0)')
+	expect(mockConsoleLog).toHaveBeenCalledWith('cast v0.1.0')
+	expect(mockProcessExit).toHaveBeenCalledWith(0)
+})
+
+test('parseCliArgs - should show version and exit with short version flag', () => {
+	const args = ['bun', 'index.ts', '-v']
+
+	expect(() => parseCliArgs(args)).toThrow('process.exit(0)')
+	expect(mockConsoleLog).toHaveBeenCalledWith('cast v0.1.0')
+	expect(mockProcessExit).toHaveBeenCalledWith(0)
 })
