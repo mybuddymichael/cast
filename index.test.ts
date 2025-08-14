@@ -266,7 +266,7 @@ test('preprocessColorInput - should convert hsb() to color(--hsv ...)', () => {
 	expect(result).toBe('color(--hsv 208 50% 100%)')
 })
 
-test('preprocessColorInput - should convert hsba() to color(--hsv ...)', () => {
+test('preprocessColorInput - should convert hsba() to color(--hsv ...) with / separator for alpha', () => {
 	const input = 'hsba(208 50% 100% / 0.5)'
 	const result = preprocessColorInput(input)
 	expect(result).toBe('color(--hsv 208 50% 100% / 0.5)')
@@ -290,10 +290,22 @@ test('preprocessColorInput - should be case insensitive', () => {
 	expect(result).toBe('color(--hsv 208 50% 100%)')
 })
 
-test('preprocessColorInput - should handle hsba with commas', () => {
+test('preprocessColorInput - should handle hsba with commas and convert to / separator', () => {
 	const input = 'hsba(208, 50%, 100%, 0.8)'
 	const result = preprocessColorInput(input)
-	expect(result).toBe('color(--hsv 208 50% 100% 0.8)')
+	expect(result).toBe('color(--hsv 208 50% 100% / 0.8)')
+})
+
+test('preprocessColorInput - should handle hsba with alpha correctly for the reported issue', () => {
+	const input = 'hsba(0, 0%, 100%, 0.1)'
+	const result = preprocessColorInput(input)
+	expect(result).toBe('color(--hsv 0 0% 100% / 0.1)')
+})
+
+test('preprocessColorInput - should handle hsba with / separator already present', () => {
+	const input = 'hsba(0 0% 100% / 0.1)'
+	const result = preprocessColorInput(input)
+	expect(result).toBe('color(--hsv 0 0% 100% / 0.1)')
 })
 
 test('preprocessColorInput - should leave non-hsb colors unchanged', () => {

@@ -135,7 +135,16 @@ export function preprocessColorInput(colorInput: string): string {
 	const hsbMatch = trimmed.match(/^hsba?\(\s*(.+)\s*\)$/i)
 	if (hsbMatch) {
 		// Remove commas and normalize the inner content
-		const innerContent = hsbMatch[1]!.replace(/,/g, ' ').replace(/\s+/g, ' ').trim()
+		let innerContent = hsbMatch[1]!.replace(/,/g, ' ').replace(/\s+/g, ' ').trim()
+
+		// Check if this is hsba with alpha (4 values)
+		const values = innerContent.split(/\s+/)
+		if (values.length === 4) {
+			// For alpha channel, use / separator
+			const [h, s, l, a] = values
+			innerContent = `${h} ${s} ${l} / ${a}`
+		}
+
 		return `color(--hsv ${innerContent})`
 	}
 
