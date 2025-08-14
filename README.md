@@ -8,6 +8,7 @@ A tiny command line utility that converts colors from one format to another.
 cast "#ff0000" --to-hsl                  # -> hsl(0, 100%, 50%)
 cast "oklch(1.000 0.000 0)" --to-rgb     # -> rgb(255, 255, 255)
 cast "rgba(0, 0, 255, 0.7)" --to-oklch   # -> oklch(45.201% 0.31321 264.05 / 0.7)
+cast "hsb(208 50% 100%)" --to-hsl        # -> hsl(208, 50%, 75%)
 ```
 
 ## Installation and usage
