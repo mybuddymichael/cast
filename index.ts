@@ -19,9 +19,7 @@ Examples:
   cast "color(--hsv 208 50% 100%)" --to-hsl
   cast "lab(50% 20 -30)" --to-lch`
 
-export function parseCliArgs(
-	args: string[] = typeof Bun !== 'undefined' ? Bun.argv : process.argv,
-): ParsedArgs {
+export function parseCliArgs(args: string[] = process.argv): ParsedArgs {
 	let values: Record<string, unknown>, positionals: string[]
 
 	try {
