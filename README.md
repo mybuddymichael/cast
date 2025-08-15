@@ -24,23 +24,24 @@ npx @hnsn/cast "<color>" [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb |
 
 ### Install via npm
 ```bash
-bun add -g cast
 bun add -g @hnsn/cast
+cast "<color>" [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
+
 ```
 ```bash
-npm install -g cast
 npm install -g @hnsn/cast
+cast "<color>" [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
 ```
 
 ### Homebrew
 ```bash
 brew install mybuddymichael/tap/cast
-cast <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
+cast "<color>" [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
 ```
 
 ### Using from LLMs
 
-Put something like this in your prompt file to help LLMs convert colors:
+Put something like this in your prompt to help LLMs convert colors:
 
 ```markdown
 Use the `cast` command to convert colors from one format to another.
