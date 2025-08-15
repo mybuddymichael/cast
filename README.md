@@ -15,19 +15,21 @@ cast "hsb(208 50% 100%)" --to-hsl        # -> hsl(208, 50%, 75%)
 
 ### Use without installing
 ```bash
-bunx cast <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
+bunx @hnsn/cast "<color>" [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
 ```
 Or with `npx`:
 ```bash
-npx cast <color> [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
+npx @hnsn/cast "<color>" [--to-rgb | --to-hsl | --to-hsv | --to-hsb | --to-hwb | --to-oklab | --to-oklch]
 ```
 
 ### Install via npm
 ```bash
 bun add -g cast
+bun add -g @hnsn/cast
 ```
 ```bash
 npm install -g cast
+npm install -g @hnsn/cast
 ```
 
 ### Homebrew
