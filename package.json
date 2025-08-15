@@ -25,10 +25,10 @@
 		"oklab"
 	],
 	"bin": {
-		"cast": "bin/cast.js"
+		"cast": "dist/cast.js"
 	},
 	"files": [
-		"bin/",
+		"dist/",
 		"README.md"
 	],
 	"type": "module",

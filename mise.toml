@@ -16,15 +16,12 @@ run = "bun --bun run tsc"
 [tasks.test]
 run = "bun test"
 
-[tasks.build-binary]
-run = "bun build index.ts --compile --minify --bytecode --outfile=bin/cast"
-
 [tasks.build-npm]
 run = [
-  "mkdir -p bin",
-  "bun build index.ts --outfile=bin/cast.js --target=node",
-  "echo '#!/usr/bin/env node' | cat - bin/cast.js > temp && mv temp bin/cast.js",
-  "chmod +x bin/cast.js",
+  "mkdir -p dist",
+  "bun build index.ts --outfile=dist/cast.js --target=node",
+  "echo '#!/usr/bin/env node' | cat - dist/cast.js > temp && mv temp dist/cast.js",
+  "chmod +x dist/cast.js",
 ]
 
 [tasks.check]
