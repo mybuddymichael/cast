@@ -1,6 +1,6 @@
 {
 	"name": "@hnsn/cast",
-	"version": "0.3.3",
+	"version": "0.3.4",
 	"description": "A tiny command line utility that converts colors from one format to another",
 	"author": "Michael Hanson",
 	"license": "MIT",
@@ -36,7 +36,6 @@
 		"@types/bun": "latest",
 		"oxlint": "^1.11.2"
 	},
-
 	"dependencies": {
 		"colorjs.io": "^0.5.2"
 	}
