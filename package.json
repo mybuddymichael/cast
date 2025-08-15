@@ -1,5 +1,5 @@
 {
-	"name": "cast",
+	"name": "@hnsn/cast",
 	"version": "0.3.1",
 	"description": "A tiny command line utility that converts colors from one format to another",
 	"author": "Michael Hanson",
